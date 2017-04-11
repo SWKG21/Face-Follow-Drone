@@ -1,0 +1,110 @@
+INTRODUCTION
+
+Sur Ubuntu 16.04, le package par défaut d'OpenCV est la version 2.4.x
+	Dans OpenCV 3.1, plusieurs algorithmes, dont sift et surf (utile pour la robotique) ont été mis dans un module différent (nonfree) qui n'est pas présent dans le paquet Ubuntu.
+Si on veut pouvoir utiliser OpenCV avec ces algorithmes, nous avons deux possibilités : 
+* Installer OpenCV 2.4.x à partir du code source en installant avec les modules nonfree. 
+Les avantages :
+ - Même fonctions
+ - OpenCV indépendant de ROS
+ - Possibilité d'installer OpenCV à sa manière (avec ou non Qt, avec ou non tbb, avec ou non prise en charge driver kinect, etc.)
+ - Compatibilité avec les noeuds ROS préexistant qui utilise OpenCV.
+Les inconvénients
+ - Faible prise en charge de python
+ - Pas accès aux dernières nouveautés d'OpenCV
+
+* Installer OpenCV 3.1 via un noeud ROS ros-indigo-opencv3
+Installer OpenCV 3.1 directement à partir du code source semble présenter plusieurs problèmes. Le noeud ROS ros-indigo-opencv3 à l'avantage de gérer la meilleure installation compatible avec ROS.
+Les avantages :
+ - Meilleure prise en charge de python
+ - Dernière nouveauté OpenCV
+ - Compatible avec le noeud ROS cv_bridge
+Les inconvénients :
+ - Si le noeud ROS évolue avec OpenCV, l'API peut être instable.
+ - OpenCV installé avec ROS, attention au conflit avec d'autre applications non-ROS
+ - Pas de maîtrise sur les options d'installation d'OpenCV 3.1
+ - Par défaut OpenCV 3.1 devient prioritaire, attention avec les anciens noeuds qui utilisait OpenCV 2.4
+
+Sur les machines de TP, ona installé uniquement ros-indigo-opencv3.
+ 
+INSTALLATION
+
+* Creation d'un catkin workspace :
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/src
+catkin_init_workspace
+cd ~/catkin_ws
+catkin_make
+source ~/catkin_ws/devel/setup.bash
+
+ * Installation du package
+- copier le repertoire package_ros_tp_kinetic_2017 dans ~/catkin_ws/src
+- dans le repertoire scripts : chmod +x *.py
+- compiler :
+cd ~/catkin_ws
+catkin_make
+source ~/catkin_ws/devel/setup.bash
+
+* Pour pouvoir utiliser ce package, il faut installer usb_cam (uvc-camera est obsolete avec ROS Kinetic)
+cd ~/catkin_ws/src
+git clone https://github.com/bosch-ros-pkg/usb_cam.git
+cd ..
+catkin_make
+source ~/catkin_ws/devel/setup.bash
+
+OPENCV
+
+* Installation Opencv 2.4.13 (OPTIONNEL)
+cd ~
+sudo apt-get install build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev libv4l-dev v4l-utils
+wget https://github.com/opencv/opencv/archive/2.4.13.2.zip
+mv 2.4.13.2.zip opencv-2.4.13.2.zip
+unzip opencv-2.4.13.2.zip
+cd opencv-2.4.13.2
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_OPENGL=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
+make -j3
+sudo make install
+
+* Desinstallation Opencv 2.4.13 (OPTIONNEL)
+ 
+cd /home/turtlebot/opencv-2.4.13.2/build
+sudo xargs rm < install_manifest.txt
+sudo rm -r /usr/local/include/opencv2 /usr/local/include/opencv /usr/local/share/OpenCV
+
+* Re-installation Opencv 2.4.13  (OPTIONNEL)
+cd /home/turtlebot/opencv-2.4.13.2/build
+sudo make install
+
+* Opencv 3.1  (OPTIONNEL)
+Pour installer ros-opencv 3 : sudo apt-get install ros-indigo-opencv3
+Pour desinstaller ros-opencv3 : sudo apt-get purge ros-indigo-opencv3
+
+UTILISATION
+
+* Penser à faire apres avoir ouvert un nouveau terminal :
+source ~/catkin_ws/devel/setup.bash
+-> astuce : on peut mettre cette ligne à la fin de ~/.bashrc
+
+* Exemple d'utilisation de la webcam dans 3 terminaux : 
+roscore
+rosrun usb_cam usb_cam_node
+rosrun image_view image_view image:=/image_raw
+
+Meme chose avec un roslaunch
+roslaunch package_ros_tp_1 displayWebcam.launch
+
+* cv_bridge + Opencv, all version
+roslaunch package_ros_tp_1 image_converter.launch
+
+* cv_bridge + sift Opencv 2.4.13 or 3.1 but not 2.4.8
+roslaunch package_ros_tp_1 image_converter_sift.launch
+
+* Pure Opencv sift and surf, version 2.4.13 or 3.1 but not 2.4.8 (peut etre lancer sans ROS)
+rosrun package_ros_tp_1 sift_surf_direct.py
+OU
+roscd package_ros_tp_1/
+cd scripts/
+python sift_surf_direct.py
+
