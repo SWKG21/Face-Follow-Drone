@@ -39,7 +39,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
   for (int i = 0; i < cv_ptr->image.rows; i++)
   {
     //Go through all the columns
-    for (int j = 0; j < cv_ptr->image.cols/2; j++)
+    for (int j = 0; j < cv_ptr->image.cols / 2; j++)
     {
       //Go through all the channels (b, g, r)
       for (int k = 0; k < cv_ptr->image.channels(); k++)
@@ -48,8 +48,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
         cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k] = 255
             - cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k];
 
-       //cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k] = 
-       // cv_ptr->image.data[i * cv_ptr->image.rows * 4 + (cv_ptr->image.cols - j) * 3 + k];
+        //cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k] =
+        // cv_ptr->image.data[i * cv_ptr->image.rows * 4 + (cv_ptr->image.cols - j) * 3 + k];
       }
     }
   }

@@ -43,11 +43,12 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
   //-- Step 1: Detect the keypoints using SIFT Detector
   cv::Ptr<cv::xfeatures2d::SIFT> detector = cv::xfeatures2d::SIFT::create();
   std::vector<cv::KeyPoint> keypoints;
-  detector->detect( cv_ptr->image, keypoints );
+  detector->detect(cv_ptr->image, keypoints);
 
   //-- Draw keypoints
   cv::Mat img_keypoints;
-  cv::drawKeypoints( cv_ptr->image,  keypoints, img_keypoints, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+  cv::drawKeypoints(cv_ptr->image, keypoints, img_keypoints, cv::Scalar::all(-1),
+      cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
   //-- Show detected (drawn) keypoints
   cv::imshow(WINDOW, img_keypoints);
