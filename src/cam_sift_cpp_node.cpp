@@ -6,13 +6,19 @@
 #include <cv_bridge/cv_bridge.h>
 //Include some useful constants for image encoding. Refer to: http://www.ros.org/doc/api/sensor_msgs/html/namespacesensor__msgs_1_1image__encodings.html for more info.
 #include <sensor_msgs/image_encodings.h>
-//Include headers for OpenCV Image processing
-#include <opencv2/imgproc/imgproc.hpp>
-//Include headers for OpenCV GUI handling
-#include <opencv2/highgui/highgui.hpp>
+
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/xfeatures2d.hpp"
+
+#include <stdio.h>
+#include <iostream>
 
 //Declare a string with the name of the window that we will create using OpenCV where processed images will be displayed.
-static const char WINDOW[] = "Image Processed";
+static const char WINDOW[] = "Keypoints Sift";
 
 //Use method of ImageTransport to create image publisher
 image_transport::Publisher pub;
@@ -26,36 +32,25 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
   {
     //Always copy, returning a mutable CvImage
     //OpenCV expects color images to use BGR channel order.
-    cv_ptr = cv_bridge::toCvCopy(original_image, sensor_msgs::image_encodings::BGR8);
+    cv_ptr = cv_bridge::toCvCopy(original_image, sensor_msgs::image_encodings::MONO8);
   } catch (cv_bridge::Exception& e)
   {
     //if there is an error during conversion, display it
-    ROS_ERROR("cam_invert_node.cpp cv_bridge exception: %s", e.what());
+    ROS_ERROR("cam_sift_cpp_node.cpp cv_bridge exception: %s", e.what());
     return;
   }
 
-  //Invert Image
-  //Go through all the rows
-  for (int i = 0; i < cv_ptr->image.rows; i++)
-  {
-    //Go through all the columns
-    for (int j = 0; j < cv_ptr->image.cols/2; j++)
-    {
-      //Go through all the channels (b, g, r)
-      for (int k = 0; k < cv_ptr->image.channels(); k++)
-      {
-        //Invert the image by subtracting image data from 255
-        cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k] = 255
-            - cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k];
+  //-- Step 1: Detect the keypoints using SIFT Detector
+  cv::Ptr<cv::xfeatures2d::SIFT> detector = cv::xfeatures2d::SIFT::create();
+  std::vector<cv::KeyPoint> keypoints;
+  detector->detect( cv_ptr->image, keypoints );
 
-       //cv_ptr->image.data[i * cv_ptr->image.rows * 4 + j * 3 + k] = 
-       // cv_ptr->image.data[i * cv_ptr->image.rows * 4 + (cv_ptr->image.cols - j) * 3 + k];
-      }
-    }
-  }
+  //-- Draw keypoints
+  cv::Mat img_keypoints;
+  cv::drawKeypoints( cv_ptr->image,  keypoints, img_keypoints, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 
-  //Display the image using OpenCV
-  cv::imshow(WINDOW, cv_ptr->image);
+  //-- Show detected (drawn) keypoints
+  cv::imshow(WINDOW, img_keypoints);
 
   //Add some delay in miliseconds. The function only works if there is at least one HighGUI window created and the window is active. If there are several HighGUI windows, any of them can be active.
   cv::waitKey(3);
@@ -67,7 +62,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
    * in the constructor in main().
    */
   //Convert the CvImage to a ROS image message and publish it on the "image_topic_out" topic.
-  pub.publish(cv_ptr->toImageMsg());
+  // convert a cv::Mat in cv_bridge::CvImagePtr
+  cv_bridge::CvImagePtr cv_ptr_keypoints(new cv_bridge::CvImage());
+  cv_ptr_keypoints->image = img_keypoints;
+  cv_ptr_keypoints->header = cv_ptr->header;
+  cv_ptr_keypoints->encoding = sensor_msgs::image_encodings::BGR8;
+
+  pub.publish(cv_ptr_keypoints->toImageMsg());
 }
 
 /**
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
    * You must call one of the versions of ros::init() before using any other
    * part of the ROS system.
    */
-  ros::init(argc, argv, "cam_invert_node");
+  ros::init(argc, argv, "cam_sift_cpp_node");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.

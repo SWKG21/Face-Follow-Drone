@@ -9,9 +9,9 @@ import cv2
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+from distutils.version import LooseVersion
 
-
-class image_converter:
+class cam_sift:
 
   def __init__(self):
     self.image_pub = rospy.Publisher("image_topic_out",Image, queue_size=1)
@@ -26,15 +26,24 @@ class image_converter:
     except CvBridgeError as e:
       print(e)
 
-    # Draw a circle
-    (rows,cols,channels) = cv_image.shape
-    center = (cols/2,rows/2)
-    thickness = 5
-    radius = min(cols/2,rows/2) - thickness
-    cv2.circle(cv_image, center, radius, 255, thickness)
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 
-    # display
-    cv2.imshow("Image with circle", cv_image)
+
+    if LooseVersion(cv2.__version__).version[0] == 2:
+      # OpenCV2 code
+      sift = cv2.FeatureDetector_create("SIFT")
+    else:
+      # OpenCV3 code
+      sift = cv2.xfeatures2d.SIFT_create()
+
+    kp = sift.detect(gray,None)
+    
+    imgSift = cv_image
+    cv2.drawKeypoints(cv_image, kp, imgSift, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+    # Display
+    cv2.imshow('sift detection',imgSift)
     cv2.waitKey(3)
 
     try:
@@ -43,10 +52,10 @@ class image_converter:
       print(e)
 
 def main(args):
-  ic = image_converter()
-  rospy.init_node('image_converter', anonymous=True)
   print("OpenCV Version: {}".format(cv2.__version__))
   print("Python Version: {}".format(sys.version))
+  ic = cam_sift()
+  rospy.init_node('cam_sift', anonymous=True)
   try:
     rospy.spin()
   except KeyboardInterrupt:

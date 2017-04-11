@@ -7,11 +7,12 @@
     <remap from="image" to="/webcam/image_raw" />
   </node>
 
-  <node name="maVisuSift" pkg="image_view" type="image_view" output="screen" />
-
-  <node name="image_converter" pkg="tp_ros_ensta_u2is" type="image_converter.py">
+  <node name="cam_sift" pkg="tp_ros_ensta_u2is" type="cam_sift.py">
     <remap from="image_topic_in" to="/webcam/image_raw" />
-    <remap from="image_topic_out" to="/maVisuSift/image" />
+  </node>
+
+  <node name="maVisuOut" pkg="image_view" type="image_view" output="screen" >
+    <remap from="image" to="/image_topic_out" />
   </node>
 
 </launch>

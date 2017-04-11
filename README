@@ -1,7 +1,7 @@
 INTRODUCTION
 
 Sur Ubuntu 16.04, le package par défaut d'OpenCV est la version 2.4.x
-	Dans OpenCV 3.1, plusieurs algorithmes, dont sift et surf (utile pour la robotique) ont été mis dans un module différent (nonfree) qui n'est pas présent dans le paquet Ubuntu.
+Dans OpenCV 3.2, plusieurs algorithmes, dont sift et surf (utile pour la robotique) ont été mis dans un module différent (nonfree) qui n'est pas présent dans le paquet Ubuntu.
 Si on veut pouvoir utiliser OpenCV avec ces algorithmes, nous avons deux possibilités : 
 * Installer OpenCV 2.4.x à partir du code source en installant avec les modules nonfree. 
 Les avantages :
@@ -13,8 +13,8 @@ Les inconvénients
  - Faible prise en charge de python
  - Pas accès aux dernières nouveautés d'OpenCV
 
-* Installer OpenCV 3.1 via un noeud ROS ros-indigo-opencv3
-Installer OpenCV 3.1 directement à partir du code source semble présenter plusieurs problèmes. Le noeud ROS ros-indigo-opencv3 à l'avantage de gérer la meilleure installation compatible avec ROS.
+* Installer OpenCV 3.2 via un noeud ROS ros-indigo-opencv3
+Installer OpenCV 3.2 directement à partir du code source semble présenter plusieurs problèmes. Le noeud ROS ros-indigo-opencv3 à l'avantage de gérer la meilleure installation compatible avec ROS.
 Les avantages :
  - Meilleure prise en charge de python
  - Dernière nouveauté OpenCV
@@ -22,12 +22,14 @@ Les avantages :
 Les inconvénients :
  - Si le noeud ROS évolue avec OpenCV, l'API peut être instable.
  - OpenCV installé avec ROS, attention au conflit avec d'autre applications non-ROS
- - Pas de maîtrise sur les options d'installation d'OpenCV 3.1
- - Par défaut OpenCV 3.1 devient prioritaire, attention avec les anciens noeuds qui utilisait OpenCV 2.4
+ - Pas de maîtrise sur les options d'installation d'OpenCV 3.2
+ - Par défaut OpenCV 3.2 devient prioritaire, attention avec les anciens noeuds qui utilisait OpenCV 2.4
 
-Sur les machines de TP, ona installé uniquement ros-indigo-opencv3.
+Sur les machines de TP, on a installé ros-indigo-opencv3. OpenCV 2.4.x est également installé depuis les dépots Ubuntu.
  
-INSTALLATION
+Plus d'info ici : http://wiki.ros.org/opencv3
+
+INSTALLATION (en fait c'est déjà préinstallé...)
 
 * Creation d'un catkin workspace :
 mkdir -p ~/catkin_ws/src
@@ -38,7 +40,7 @@ catkin_make
 source ~/catkin_ws/devel/setup.bash
 
  * Installation du package
-- copier le repertoire package_ros_tp_kinetic_2017 dans ~/catkin_ws/src
+- copier le repertoire tp_ros_ensta_u2is dans ~/catkin_ws/src
 - dans le repertoire scripts : chmod +x *.py
 - compiler :
 cd ~/catkin_ws
@@ -77,13 +79,13 @@ sudo rm -r /usr/local/include/opencv2 /usr/local/include/opencv /usr/local/share
 cd /home/turtlebot/opencv-2.4.13.2/build
 sudo make install
 
-* Opencv 3.1  (OPTIONNEL)
+* Opencv 3.2  (OPTIONNEL)
 Pour installer ros-opencv 3 : sudo apt-get install ros-indigo-opencv3
 Pour desinstaller ros-opencv3 : sudo apt-get purge ros-indigo-opencv3
 
 UTILISATION
 
-* Penser à faire apres avoir ouvert un nouveau terminal :
+* Penser à le faire après avoir ouvert un nouveau terminal :
 source ~/catkin_ws/devel/setup.bash
 -> astuce : on peut mettre cette ligne à la fin de ~/.bashrc
 
@@ -93,18 +95,24 @@ rosrun usb_cam usb_cam_node
 rosrun image_view image_view image:=/image_raw
 
 Meme chose avec un roslaunch
-roslaunch package_ros_tp_1 displayWebcam.launch
+roslaunch tp_ros_ensta_u2is displayWebcam.launch
 
-* cv_bridge + Opencv, all version
-roslaunch package_ros_tp_1 image_converter.launch
+* cv_bridge + Opencv + python
+roslaunch tp_ros_ensta_u2is cam_circle_py.launch
 
-* cv_bridge + sift Opencv 2.4.13 or 3.1 but not 2.4.8
-roslaunch package_ros_tp_1 image_converter_sift.launch
+* cv_bridge + Opencv 3.2 + cpp
+roslaunch tp_ros_ensta_u2is cam_invert_cpp.launch
 
-* Pure Opencv sift and surf, version 2.4.13 or 3.1 but not 2.4.8 (peut etre lancer sans ROS)
-rosrun package_ros_tp_1 sift_surf_direct.py
+* cv_bridge + sift Opencv 2.4.13 or 3.2 but not 2.4.8 + python
+roslaunch tp_ros_ensta_u2is cam_sift_py.launch
+
+* cv_bridge + sift Opencv 3.2 + python
+roslaunch tp_ros_ensta_u2is cam_sift_cpp.launch
+
+* Pure Opencv sift and surf, version 2.4.13 or 3.2 but not 2.4.8 (peut etre lancer sans ROS)
+rosrun tp_ros_ensta_u2is sift_surf_direct.py
 OU
-roscd package_ros_tp_1/
+roscd tp_ros_ensta_u2is/
 cd scripts/
 python sift_surf_direct.py
 
