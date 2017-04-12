@@ -1,4 +1,4 @@
-INTRODUCTION
+﻿INTRODUCTION
 
 Sur Ubuntu 16.04, le package par défaut d'OpenCV est la version 2.4.x
 Dans OpenCV 3.2, plusieurs algorithmes, dont sift et surf (utile pour la robotique) ont été mis dans un module différent (nonfree) qui n'est pas présent dans le paquet Ubuntu.
@@ -6,9 +6,9 @@ Si on veut pouvoir utiliser OpenCV avec ces algorithmes, nous avons deux possibi
 * Installer OpenCV 2.4.x à partir du code source en installant avec les modules nonfree. 
 Les avantages :
  - Même fonctions
- - OpenCV indépendant de ROS
- - Possibilité d'installer OpenCV à sa manière (avec ou non Qt, avec ou non tbb, avec ou non prise en charge driver kinect, etc.)
- - Compatibilité avec les noeuds ROS préexistant qui utilise OpenCV.
+ - OpenCV indépendante de ROS
+ - Possibilité d'installer OpenCV à sa manière (avec ou non Qt, avec ou non tbb, avec ou non prise en charge driver Kinect, etc.)
+ - Compatibilité avec les noeuds ROS préexistants qui utilisent OpenCV.
 Les inconvénients
  - Faible prise en charge de python
  - Pas accès aux dernières nouveautés d'OpenCV
@@ -21,17 +21,17 @@ Les avantages :
  - Compatible avec le noeud ROS cv_bridge
 Les inconvénients :
  - Si le noeud ROS évolue avec OpenCV, l'API peut être instable.
- - OpenCV installé avec ROS, attention au conflit avec d'autre applications non-ROS
+ - OpenCV installée avec ROS, attention aux conflits avec d'autres applications non-ROS
  - Pas de maîtrise sur les options d'installation d'OpenCV 3.2
- - Par défaut OpenCV 3.2 devient prioritaire, attention avec les anciens noeuds qui utilisait OpenCV 2.4
+ - Par défaut, OpenCV 3.2 devient prioritaire, attention avec les anciens noeuds qui utilisaient OpenCV 2.4
 
-Sur les machines de TP, on a installé ros-indigo-opencv3. OpenCV 2.4.x est également installé depuis les dépots Ubuntu.
+Sur les machines de TP, on a installé ros-indigo-opencv3. OpenCV 2.4.x est également installée depuis les dépôts Ubuntu.
  
 Plus d'info ici : http://wiki.ros.org/opencv3
 
-INSTALLATION (en fait c'est déjà préinstallé...)
+INSTALLATION (en fait, c'est déjà préinstallé...)
 
-* Creation d'un catkin workspace :
+* Création d'un catkin workspace :
 mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/src
 catkin_init_workspace
@@ -40,14 +40,14 @@ catkin_make
 source ~/catkin_ws/devel/setup.bash
 
  * Installation du package
-- copier le repertoire tp_ros_ensta_u2is dans ~/catkin_ws/src
-- dans le repertoire scripts : chmod +x *.py
+- copier le répertoire tp_ros_ensta_u2is dans ~/catkin_ws/src
+- dans le répertoire scripts : chmod +x *.py
 - compiler :
 cd ~/catkin_ws
 catkin_make
 source ~/catkin_ws/devel/setup.bash
 
-* Pour pouvoir utiliser ce package, il faut installer usb_cam (uvc-camera est obsolete avec ROS Kinetic)
+* Pour pouvoir utiliser ce package, il faut installer usb_cam (uvc-camera est obsolète avec ROS Kinetic)
 cd ~/catkin_ws/src
 git clone https://github.com/bosch-ros-pkg/usb_cam.git
 cd ..
@@ -56,7 +56,7 @@ source ~/catkin_ws/devel/setup.bash
 
 OPENCV
 
-* Installation Opencv 2.4.13 (OPTIONNEL)
+* Installation OpenCV 2.4.13 (OPTIONNEL)
 cd ~
 sudo apt-get install build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev libv4l-dev v4l-utils
 wget https://github.com/opencv/opencv/archive/2.4.13.2.zip
@@ -69,19 +69,19 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB
 make -j3
 sudo make install
 
-* Desinstallation Opencv 2.4.13 (OPTIONNEL)
+* Désinstallation OpenCV 2.4.13 (OPTIONNEL)
  
 cd /home/turtlebot/opencv-2.4.13.2/build
 sudo xargs rm < install_manifest.txt
 sudo rm -r /usr/local/include/opencv2 /usr/local/include/opencv /usr/local/share/OpenCV
 
-* Re-installation Opencv 2.4.13  (OPTIONNEL)
+* Re-installation OpenCV 2.4.13  (OPTIONNEL)
 cd /home/turtlebot/opencv-2.4.13.2/build
 sudo make install
 
-* Opencv 3.2  (OPTIONNEL)
+* OpenCV 3.2  (OPTIONNEL)
 Pour installer ros-opencv 3 : sudo apt-get install ros-indigo-opencv3
-Pour desinstaller ros-opencv3 : sudo apt-get purge ros-indigo-opencv3
+Pour désinstaller ros-opencv3 : sudo apt-get purge ros-indigo-opencv3
 
 UTILISATION
 
@@ -94,22 +94,22 @@ roscore
 rosrun usb_cam usb_cam_node
 rosrun image_view image_view image:=/image_raw
 
-Meme chose avec un roslaunch
+Même chose avec un roslaunch
 roslaunch tp_ros_ensta_u2is displayWebcam.launch
 
-* cv_bridge + Opencv + python
+* cv_bridge + OpenCV + python
 roslaunch tp_ros_ensta_u2is cam_circle_py.launch
 
-* cv_bridge + Opencv 3.2 + cpp
+* cv_bridge + OpenCV 3.2 + cpp
 roslaunch tp_ros_ensta_u2is cam_invert_cpp.launch
 
-* cv_bridge + sift Opencv 2.4.13 or 3.2 but not 2.4.8 + python
+* cv_bridge + sift OpenCV 2.4.13 or 3.2 but not 2.4.8 + python
 roslaunch tp_ros_ensta_u2is cam_sift_py.launch
 
-* cv_bridge + sift Opencv 3.2 + python
+* cv_bridge + sift OpenCV 3.2 + python
 roslaunch tp_ros_ensta_u2is cam_sift_cpp.launch
 
-* Pure Opencv sift and surf, version 2.4.13 or 3.2 but not 2.4.8 (peut etre lancer sans ROS)
+* Pure OpenCV sift and surf, version 2.4.13 or 3.2 but not 2.4.8 (peut être lancer sans ROS)
 rosrun tp_ros_ensta_u2is sift_surf_direct.py
 OU
 roscd tp_ros_ensta_u2is/
