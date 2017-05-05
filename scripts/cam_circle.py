@@ -36,7 +36,24 @@ class cam_circle:
     # display
     cv2.imshow("Image with circle", cv_image)
     cv2.waitKey(3)
-
+    '''
+    # Our operations on the frame come here
+    #image = cv2.imread(cv_image)
+    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+    # Detect faces
+    faces = self.faceCascade.detectMultiScale(
+      gray,
+      scaleFactor=1.1,
+      minNeighbors=5,
+      minSize=(40, 40),
+      flags = cv2.CV_HAAR_SCALE_IMAGE
+    )
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+      cv2.rectangle(cv_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    
+    cv2.imshow("Faces found", cv_image)
+    cv.waitKey(3)'''
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
     except CvBridgeError as e:
