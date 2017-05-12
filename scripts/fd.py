@@ -38,9 +38,10 @@ class face_det:
     # Detect faces in the image
     self.faces = self.faceCascade.detectMultiScale(
       gray,
-      scaleFactor=1.1,
+      scaleFactor=1.05,
       minNeighbors=5,
-      minSize=(120, 110)
+      minSize=(50, 50),
+      #maxSize(75, 75)
       #flags = cv2.CV_HAAR_SCALE_IMAGE
     )
     #print("Found {0} faces!".format(len(faces)))
