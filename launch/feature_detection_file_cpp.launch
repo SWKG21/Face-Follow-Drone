@@ -1,9 +1,0 @@
-<launch>
-
-  <arg name="file1" value="$(find tp_ros_ensta_u2is)/img/box.png" />
-  <arg name="file2" value="$(find tp_ros_ensta_u2is)/img/box_in_scene.png" />
-
-  <node name="myFeatureDetection" pkg="tp_ros_ensta_u2is" type="feature_detection_node" args=" $(arg file1) $(arg file2)">
-  </node>
-</launch>
-
