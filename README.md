@@ -1,4 +1,4 @@
-# Face-Follow-Drone
+# Face Follow Drone
 
 This is a project of course "Modal-Robots" at École Polytechnique.
 
